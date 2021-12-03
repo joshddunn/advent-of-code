@@ -1,5 +1,3 @@
-require 'pry'
-
 def input(filename)
   File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n").map do |line|
     direction, amount = line.split(' ')
@@ -7,27 +5,27 @@ def input(filename)
   end
 end
 
-def multiplication(filename)
+def dive_one(filename)
   inputs = input(filename)
 
-  x = 0
-  y = 0
+  horizontal = 0
+  depth = 0
 
   inputs.each do |input|
     case input[:direction]
     when 'up'
-      y -= input[:amount]
+      depth -= input[:amount]
     when 'down'
-      y += input[:amount]
+      depth += input[:amount]
     when 'forward'
-      x += input[:amount]
+      horizontal += input[:amount]
     end
   end
 
-  x * y
+  horizontal * depth
 end
 
-def depth_multiplication(filename)
+def dive_two(filename)
   inputs = input(filename)
 
   horizontal = 0
@@ -48,9 +46,3 @@ def depth_multiplication(filename)
 
   horizontal * depth
 end
-
-puts "Part 1 Example: #{multiplication('example.txt')}"
-puts "Part 1: #{multiplication('input.txt')}"
-
-puts "Part 2 Example: #{depth_multiplication('example.txt')}"
-puts "Part 2: #{depth_multiplication('input.txt')}"
