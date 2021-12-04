@@ -1,19 +1,21 @@
 require 'pry'
 
 def input(filename)
-  numbers = nil
   boards = []
   board = []
-  File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n").map do |line|
-    if numbers
-      if line.empty?
-        boards << board if board.count.positive?
-        board = []
-      else
-        board << line.strip.split(' ').map(&:to_i)
-      end
+
+  lines = File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n")
+
+  numbers = lines.shift.split(',').map(&:to_i)
+
+  lines.shift # empty line
+
+  lines.each do |line|
+    if line.empty?
+      boards << board
+      board = []
     else
-      numbers = line.split(',').map(&:to_i)
+      board << line.strip.split(' ').map(&:to_i)
     end
   end
 
@@ -23,39 +25,23 @@ def input(filename)
 end
 
 def winning_board(board)
-  board.any? { |row| row.sum == -5 } || board.transpose.any? { |col| col.sum == -5 }
-end
-
-def board_sum(board)
-  board.sum { |row| row.reject(&:negative?).sum }
+  board.any?(&:none?) || board.transpose.any?(&:none?)
 end
 
 def solution(filename, first_winner = true)
   inputs = input(filename)
 
-  winning_num = nil
-  winner = nil
-
   inputs[:numbers].each do |number|
-    inputs[:boards].each_with_index do |board, board_index|
-      board.each_with_index do |row, i|
-        row.each_with_index do |val, j|
-          inputs[:boards][board_index][i][j] = -1 if val == number
-        end
-      end
+    inputs[:boards].map! do |board|
+      board.map { |row| row.map { |val| val == number ? nil : val } }
     end
 
     if first_winner || inputs[:boards].count == 1
-      winner = inputs[:boards].find { |board| winning_board(board) }
+      if (winner = inputs[:boards].find { |board| winning_board(board) })
+        return winner.flatten.compact.sum * number
+      end
     else
-      inputs[:boards] = inputs[:boards].reject { |board| winning_board(board) }
-    end
-
-    if winner
-      winning_num = number
-      break
+      inputs[:boards].reject! { |board| winning_board(board) }
     end
   end
-
-  board_sum(winner) * winning_num
 end
