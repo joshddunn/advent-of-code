@@ -7,7 +7,13 @@ Layout/LineLength:
 Metrics/AbcSize:
   Enabled: false
 
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
 Metrics/MethodLength:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
   Enabled: false
 
 Style/Documentation:
@@ -17,4 +23,7 @@ Style/FrozenStringLiteralComment:
   Enabled: false
 
 Style/IfUnlessModifier:
+  Enabled: false
+
+Style/OptionalBooleanParameter:
   Enabled: false
