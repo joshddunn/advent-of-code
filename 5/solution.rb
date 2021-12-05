@@ -3,46 +3,29 @@ require 'pry'
 def input(filename)
   File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n").map do |line|
     first, second = line.split(' -> ')
-    [first.split(',').map(&:to_i), second.split(',').map(&:to_i)]
+    x1, y1 = first.split(',').map(&:to_i)
+    x2, y2 = second.split(',').map(&:to_i)
+    [OpenStruct.new(x: x1, y: y1), OpenStruct.new(x: x2, y: y2)]
   end
 end
 
 def solution(filename, diagonals = false)
   inputs = input(filename)
 
-  map = {}
+  map = Hash.new(0)
 
   inputs.each do |input|
     first, second = input
-    if first[0] == second[0] || first[1] == second[1]
-      x_min = [first[0], second[0]].min
-      x_max = [first[0], second[0]].max
-      if x_min != x_max
-        (x_min..x_max).each do |x|
-          map["#{x},#{first[1]}"] ||= 0
-          map["#{x},#{first[1]}"] += 1
-        end
-      end
 
-      y_min = [first[1], second[1]].min
-      y_max = [first[1], second[1]].max
-      if y_min != y_max
-        (y_min..y_max).each do |y|
-          map["#{first[0]},#{y}"] ||= 0
-          map["#{first[0]},#{y}"] += 1
-        end
-      end
-    elsif diagonals
-      x_min = [first[0], second[0]].min
-      x_max = [first[0], second[0]].max
+    if first.x == second.x
+      Range.new(*[first.y, second.y].sort).each { |y| map["#{first.x},#{y}"] += 1 }
+    else
+      m = (second.y - first.y) / (second.x - first.x)
+      b = second.y - m * second.x
 
-      m = (second[1] - first[1]) / (second[0] - first[0])
-      b = second[1] - m * second[0]
+      next unless m.zero? || diagonals
 
-      (x_min..x_max).each do |x|
-        map["#{x},#{m * x + b}"] ||= 0
-        map["#{x},#{m * x + b}"] += 1
-      end
+      Range.new(*[first.x, second.x].sort).each { |x| map["#{x},#{m * x + b}"] += 1 }
     end
   end
 
