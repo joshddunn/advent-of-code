@@ -27,10 +27,6 @@ end
 
 def solution(filename, days)
   fishes = input(filename).map { |timer| LanternFishSchool.new(timer, 1) }
-
-  days.times do |day|
-    fishes << LanternFishSchool.new(8, fishes.sum(&:decrement))
-  end
-
+  days.times { |day| fishes << LanternFishSchool.new(8, fishes.sum(&:decrement)) }
   fishes.sum(&:number)
 end
