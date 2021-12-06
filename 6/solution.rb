@@ -29,3 +29,17 @@ def solution(filename, days)
   days.times { |day| fishes << LanternFishSchool.new(8, fishes.sum(&:decrement)) }
   fishes.sum(&:number)
 end
+
+#############
+# code golf #
+#############
+
+def solution_golf(filename, days)
+  fishes = Array.new(9, 0)
+  input(filename).each { |timer| fishes[timer] += 1 }
+  days.times do |day|
+    fishes[8] = fishes.shift
+    fishes[6] += fishes[8]
+  end
+  fishes.sum
+end
