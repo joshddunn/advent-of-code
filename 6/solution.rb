@@ -1,16 +1,36 @@
 require 'pry'
 
 def input(filename)
-  File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n").map do |line|
-    # put stuff here
-    line
+  file = File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n")
+  file.shift.split(": ").last.split(",").map(&:to_i)
+end
+
+class LanternFish
+  attr_reader :timer, :number
+
+  def initialize(timer, number)
+    @timer = timer
+    @number = number
+  end
+
+  def decrement
+    @timer -= 1
+    @timer < 0 ? reproduce : 0
+  end
+
+  # lol
+  private def reproduce
+    @timer = 6
+    @number
   end
 end
 
-def part_one(filename)
-  inputs = input(filename)
-end
+def solution(filename, days)
+  fishes = input(filename).map { |timer| LanternFish.new(timer, 1) }
 
-def part_two(filename)
-  inputs = input(filename)
+  (1..days).each do |day|
+    fishes.push(LanternFish.new(8, fishes.sum(&:decrement)))
+  end
+
+  fishes.sum(&:number)
 end

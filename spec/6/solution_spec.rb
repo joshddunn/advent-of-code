@@ -2,18 +2,18 @@ require_relative '../../6/solution'
 
 RSpec.describe '6' do
   it 'example one' do
-    expect(part_one('example.txt')).to eq(0)
+    expect(solution('example.txt', 80)).to eq(5934)
   end
 
   it 'part one' do
-    expect(part_one('input.txt')).to eq(0)
+    expect(solution('input.txt', 80)).to eq(387413)
   end
 
   it 'example one' do
-    expect(part_two('example.txt', true)).to eq(0)
+    expect(solution('example.txt', 256)).to eq(26984457539)
   end
 
   it 'part two' do
-    expect(part_two('input.txt', true)).to eq(0)
+    expect(solution('input.txt', 256)).to eq(1738377086345)
   end
 end
