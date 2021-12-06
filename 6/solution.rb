@@ -1,8 +1,7 @@
 require 'pry'
 
 def input(filename)
-  file = File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n")
-  file.shift.split(": ").last.split(",").map(&:to_i)
+  File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n").first.split(",").map(&:to_i)
 end
 
 class LanternFishSchool
