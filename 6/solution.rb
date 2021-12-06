@@ -37,9 +37,6 @@ end
 def solution_golf(filename, days)
   fishes = Array.new(9, 0)
   input(filename).each { |timer| fishes[timer] += 1 }
-  days.times do |day|
-    fishes[8] = fishes.shift
-    fishes[6] += fishes[8]
-  end
+  days.times { |day| fishes.rotate!(1)[6] += fishes[8] }
   fishes.sum
 end
