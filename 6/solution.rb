@@ -5,7 +5,7 @@ def input(filename)
   file.shift.split(": ").last.split(",").map(&:to_i)
 end
 
-class LanternFish
+class LanternFishSchool
   attr_reader :timer, :number
 
   def initialize(timer, number)
@@ -26,10 +26,10 @@ class LanternFish
 end
 
 def solution(filename, days)
-  fishes = input(filename).map { |timer| LanternFish.new(timer, 1) }
+  fishes = input(filename).map { |timer| LanternFishSchool.new(timer, 1) }
 
-  (1..days).each do |day|
-    fishes << LanternFish.new(8, fishes.sum(&:decrement))
+  days.times do |day|
+    fishes << LanternFishSchool.new(8, fishes.sum(&:decrement))
   end
 
   fishes.sum(&:number)
