@@ -29,7 +29,7 @@ def solution(filename, days)
   fishes = input(filename).map { |timer| LanternFish.new(timer, 1) }
 
   (1..days).each do |day|
-    fishes.push(LanternFish.new(8, fishes.sum(&:decrement)))
+    fishes << LanternFish.new(8, fishes.sum(&:decrement))
   end
 
   fishes.sum(&:number)
