@@ -17,7 +17,6 @@ class LanternFishSchool
     @timer < 0 ? reproduce : 0
   end
 
-  # lol
   private def reproduce
     @timer = 6
     @number
