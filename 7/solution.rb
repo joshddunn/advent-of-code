@@ -7,10 +7,7 @@ end
 def solution(filename, alternate = false)
   inputs = input(filename)
 
-  min = inputs.min
-  max = inputs.max
-
-  (min..max).map do |val|
+  (inputs.min..inputs.max).map do |val|
     inputs.sum do |input|
       amount = (input - val).abs
       alternate ? amount * (amount + 1) / 2 : amount
