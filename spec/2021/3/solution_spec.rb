@@ -1,4 +1,4 @@
-require_relative '../../3/solution'
+require_relative '../../../2021/3/solution'
 
 RSpec.describe '3' do
   it 'example one' do
