@@ -1,10 +1,10 @@
-require 'pry'
+require_relative "../../helper"
 
 def input(filename)
   boards = []
   board = []
 
-  lines = File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n")
+  lines = lines(__FILE__, filename)
 
   numbers = lines.shift.split(',').map(&:to_i)
 

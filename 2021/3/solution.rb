@@ -1,5 +1,7 @@
+require_relative "../../helper"
+
 def input(filename)
-  File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n")
+  lines(__FILE__, filename)
 end
 
 def diagnostic_one(filename)
@@ -47,9 +49,6 @@ def diagnostic_two(filename)
 
   oxygen_generator_rating = most_common_value(inputs).to_i(2)
   co2_scrubber_rating = least_common_value(inputs).to_i(2)
-
-  puts oxygen_generator_rating
-  puts co2_scrubber_rating
 
   oxygen_generator_rating * co2_scrubber_rating
 end

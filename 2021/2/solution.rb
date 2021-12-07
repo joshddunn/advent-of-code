@@ -1,5 +1,7 @@
+require_relative "../../helper"
+
 def input(filename)
-  File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n").map do |line|
+  lines(__FILE__, filename).map do |line|
     direction, amount = line.split(' ')
     { direction: direction, amount: amount.to_i }
   end

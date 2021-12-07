@@ -1,5 +1,7 @@
+require_relative "../../helper"
+
 def input(filename)
-  File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n").map(&:to_i)
+  lines(__FILE__, filename).map(&:to_i)
 end
 
 def sonar_sweep(filename, window = 1)

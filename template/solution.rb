@@ -1,12 +1,16 @@
-require 'pry'
+require_relative "../../helper"
 
 def input(filename)
-  File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n").map do |line|
-    # put stuff here
-    line
-  end
+  lines(__FILE__, filename)
 end
 
 def solution(filename)
   inputs = input(filename)
+
+  # add stuff here
 end
+
+spec solution("example.txt"), 0
+spec solution("input.txt"), 0
+spec solution("example.txt"), 0
+spec solution("input.txt"), 0

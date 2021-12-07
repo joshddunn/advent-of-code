@@ -1,7 +1,7 @@
-require 'pry'
+require_relative "../../helper"
 
 def input(filename)
-  File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n").map do |line|
+  lines(__FILE__, filename).map do |line|
     first, second = line.split(' -> ')
     x1, y1 = first.split(',').map(&:to_i)
     x2, y2 = second.split(',').map(&:to_i)

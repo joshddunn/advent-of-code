@@ -1,7 +1,7 @@
-require 'pry'
+require_relative "../../helper"
 
 def input(filename)
-  File.read("#{File.dirname(__FILE__)}/#{filename}").split("\n").first.split(",").map(&:to_i)
+  lines(__FILE__, filename).first.split(",").map(&:to_i)
 end
 
 def solution(filename, alternate = false)
