@@ -18,23 +18,22 @@ PERMUTATIONS = ("a".."g").to_a.permutation(7)
 def input(filename)
   lines(__FILE__, filename).map do |line|
     codes, answer = line.split(" | ")
-    {
-      codes: codes.split(" ").map { |k| k.split("").sort },
-      answer: answer.split(" ").map { |k| k.split("").sort }
-    }
+    OpenStruct.new(
+      codes: codes.split(" "),
+      answer: answer.split(" ")
+    )
   end
 end
 
-def map_letter(mapper, letter)
-  NUMBERS[letter.map { |l| mapper[l] }.sort.join("")]
+def mutate(letters, to)
+  NUMBERS[letters.tr("abcdefg", to.join).split("").sort.join]
 end
 
 def solve(input)
-  letters = ("a".."g").to_a
-
   PERMUTATIONS.each do |permutation|
-    mapper = letters.zip(permutation).to_h
-    return input[:answer].map { |answer| map_letter(mapper, answer) } if input[:codes].all? { |code| map_letter(mapper, code) }
+    if input.codes.all? { |code| mutate(code, permutation) }
+      return input.answer.map { |answer| mutate(answer, permutation) }
+    end
   end
 end
 
