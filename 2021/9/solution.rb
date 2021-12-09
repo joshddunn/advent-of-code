@@ -32,41 +32,37 @@ end
 def search(root, inputs, queue = Set.new)
   queue = queue.add root
 
-  inputs[root[:x]][root[:y]] = nil
+  inputs[root[:x]][root[:y]] = 9
 
   x = root[:x] + 1
   y = root[:y]
-  queue.merge search({ x: x, y: y }, inputs, queue) if x < inputs.length && inputs[x][y] == 0
+  queue.merge search({ x: x, y: y }, inputs, queue) if x < inputs.length && inputs[x][y] != 9
 
   x = root[:x] - 1
   y = root[:y]
-  queue.merge search({ x: x, y: y }, inputs, queue) if x >= 0 && inputs[x][y] == 0
+  queue.merge search({ x: x, y: y }, inputs, queue) if x >= 0 && inputs[x][y] != 9
 
   x = root[:x]
   y = root[:y] + 1
-  queue.merge search({ x: x, y: y }, inputs, queue) if x < inputs[0].length && inputs[x][y] == 0
+  queue.merge search({ x: x, y: y }, inputs, queue) if y < inputs[0].length && inputs[x][y] != 9
 
   x = root[:x]
   y = root[:y] - 1
-  queue.merge search({ x: x, y: y }, inputs, queue) if y >= 0 && inputs[x][y] == 0
+  queue.merge search({ x: x, y: y }, inputs, queue) if y >= 0 && inputs[x][y] != 9
 
   queue
 end
 
 def solution_two(filename)
-  inputs = input(filename).map do |row|
-    row.map do |col|
-      col == 9 ? 1 : 0
-    end
-  end
+  inputs = input(filename)
 
   clusters = []
 
   inputs.each_with_index do |row, x|
-    row.each_with_index do |val, y|
-      clusters.push(search({ x: x, y: y }, inputs)) if inputs[x][y] == 0
+    row.each_with_index do |_, y|
+      clusters.push(search({ x: x, y: y }, inputs)) if inputs[x][y] != 9
     end
   end
 
-  clusters.map { |c| c.count }.sort.last(3).inject(&:*)
+  clusters.map(&:count).sort.last(3).inject(&:*)
 end
