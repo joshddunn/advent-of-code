@@ -1,4 +1,5 @@
 require_relative "../../helper"
+require "set"
 
 def input(filename)
   lines(__FILE__, filename).map do |line|
@@ -28,17 +29,28 @@ def solution(filename)
   low_points.values.sum { |val| val + 1 }
 end
 
-def search(root, inputs, queue = [])
-  queue = queue.push root
+def search(root, inputs, queue = Set.new)
+  queue = queue.add root
 
   inputs[root[:x]][root[:y]] = nil
 
-  queue.concat search({ x: root[:x] + 1, y: root[:y] }, inputs, queue) if root[:x] + 1 < inputs.length && inputs[root[:x] + 1][root[:y]] == 0
-  queue.concat search({ x: root[:x] - 1, y: root[:y] }, inputs, queue) if root[:x] - 1 >= 0 && inputs[root[:x] - 1][root[:y]] == 0
-  queue.concat search({ x: root[:x], y: root[:y] + 1 }, inputs, queue) if root[:y] + 1 < inputs[0].length && inputs[root[:x]][root[:y] + 1] == 0
-  queue.concat search({ x: root[:x], y: root[:y] - 1 }, inputs, queue) if root[:y] - 1 >= 0 && inputs[root[:x]][root[:y] - 1] == 0
+  x = root[:x] + 1
+  y = root[:y]
+  queue.merge search({ x: x, y: y }, inputs, queue) if x < inputs.length && inputs[x][y] == 0
 
-  queue.uniq
+  x = root[:x] - 1
+  y = root[:y]
+  queue.merge search({ x: x, y: y }, inputs, queue) if x >= 0 && inputs[x][y] == 0
+
+  x = root[:x]
+  y = root[:y] + 1
+  queue.merge search({ x: x, y: y }, inputs, queue) if x < inputs[0].length && inputs[x][y] == 0
+
+  x = root[:x]
+  y = root[:y] - 1
+  queue.merge search({ x: x, y: y }, inputs, queue) if y >= 0 && inputs[x][y] == 0
+
+  queue
 end
 
 def solution_two(filename)
@@ -50,9 +62,9 @@ def solution_two(filename)
 
   clusters = []
 
-  inputs.each_with_index do |row, i|
-    row.each_with_index do |val, j|
-      clusters.push(search({ x: i, y: j }, inputs)) if inputs[i][j] == 0
+  inputs.each_with_index do |row, x|
+    row.each_with_index do |val, y|
+      clusters.push(search({ x: x, y: y }, inputs)) if inputs[x][y] == 0
     end
   end
 
