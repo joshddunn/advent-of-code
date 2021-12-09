@@ -31,23 +31,21 @@ end
 def search(root, inputs, queue = Set.new)
   queue = queue.add root
 
+  width = inputs.length
+  height = inputs[0].length
+
   inputs[root[:x]][root[:y]] = 9
 
-  x = root[:x] + 1
-  y = root[:y]
-  queue.merge search({ x: x, y: y }, inputs, queue) if x < inputs.length && inputs[x][y] != 9
+  [[1, 0], [-1, 0], [0, 1], [0, -1]].each do |dxdy|
+    dx, dy = dxdy
 
-  x = root[:x] - 1
-  y = root[:y]
-  queue.merge search({ x: x, y: y }, inputs, queue) if x >= 0 && inputs[x][y] != 9
+    x = root[:x] + dx
+    y = root[:y] + dy
 
-  x = root[:x]
-  y = root[:y] + 1
-  queue.merge search({ x: x, y: y }, inputs, queue) if y < inputs[0].length && inputs[x][y] != 9
+    next if x < 0 || y < 0 || x >= width || y >= height || inputs[x][y] == 9
 
-  x = root[:x]
-  y = root[:y] - 1
-  queue.merge search({ x: x, y: y }, inputs, queue) if y >= 0 && inputs[x][y] != 9
+    queue.merge search({ x: x, y: y }, inputs, queue)
+  end
 
   queue
 end
