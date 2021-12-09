@@ -1,4 +1,5 @@
 require 'pry'
+require 'set'
 
 def spec(actual, expected)
   if actual == expected

@@ -1,5 +1,4 @@
 require_relative "../../helper"
-require "set"
 
 def input(filename)
   lines(__FILE__, filename).map do |line|
