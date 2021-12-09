@@ -60,7 +60,7 @@ def solution_two(filename)
 
   inputs.each_with_index do |row, x|
     row.each_with_index do |_, y|
-      clusters.push(search({ x: x, y: y }, inputs)) if inputs[x][y] != 9
+      clusters.push search({ x: x, y: y }, inputs) if inputs[x][y] != 9
     end
   end
 
