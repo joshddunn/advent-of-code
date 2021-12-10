@@ -20,42 +20,27 @@ POINTS_TWO = {
   ">" => 4
 }
 
+MATCHES = {
+  ")" => "(",
+  "]" => "[",
+  "}" => "{",
+  ">" => "<"
+}
+
 def check_corrupted(input)
   stack = []
   corrupted = nil
 
   input.each do |char|
-    case char
-    when "(", "{", "[", "<"
+    if MATCHES[char]
+      if stack.last == MATCHES[char]
+        stack.pop
+      else
+        corrupted = char
+        break
+      end
+    else
       stack << char
-    when ")"
-      if stack.last == "("
-        stack.pop
-      else
-        corrupted = ")"
-        break
-      end
-    when "}"
-      if stack.last == "{"
-        stack.pop
-      else
-        corrupted = "}"
-        break
-      end
-    when "]"
-      if stack.last == "["
-        stack.pop
-      else
-        corrupted = "]"
-        break
-      end
-    when ">"
-      if stack.last == "<"
-        stack.pop
-      else
-        corrupted = ">"
-        break
-      end
     end
   end
 
@@ -63,22 +48,7 @@ def check_corrupted(input)
 end
 
 def completed(stack)
-  answer = []
-
-  stack.reverse.each do |item|
-    case item
-    when "("
-      answer << ")"
-    when "{"
-      answer << "}"
-    when "<"
-      answer << ">"
-    when "["
-      answer << "]"
-    end
-  end
-
-  answer
+  stack.reverse.map { |char| MATCHES.key(char) }
 end
 
 def solution(filename, alternate = false)
