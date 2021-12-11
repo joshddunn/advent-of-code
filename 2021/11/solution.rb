@@ -7,24 +7,28 @@ def input(filename)
 end
 
 def flash(octos, queue, flashes = 0)
+  flashes += queue.length
+
   new_queue = []
 
   queue.each do |octo|
     (-1..1).each do |dx|
       (-1..1).each do |dy|
         next if dx.zero? && dy.zero?
+
         x = octo[:x] + dx
         y = octo[:y] + dy
 
         next if x < 0 || y < 0 || x >= octos[0].length || y >= octos.length
 
         octos[x][y] += 1
+
         new_queue << { x: x, y: y } if octos[x][y] == 10
       end
     end
   end
 
-  new_queue.length.zero? ? flashes : flash(octos, new_queue, flashes += new_queue.length)
+  new_queue.length.zero? ? flashes : flash(octos, new_queue, flashes)
 end
 
 def solution(filename, iterations = 100)
@@ -48,7 +52,7 @@ def solution(filename, iterations = 100)
       end
     end
 
-    flashes += flash(octos, queue, queue.count)
+    flashes += flash(octos, queue)
 
     octos.each_with_index do |row, x|
       row.each_with_index do |_, y|
