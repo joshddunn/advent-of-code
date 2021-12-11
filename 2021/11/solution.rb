@@ -38,11 +38,7 @@ def solution(filename, iterations = 100)
   iter = 0
 
   while iter < iterations do
-    octos.each_with_index do |row, x|
-      row.each_with_index do |_, y|
-        octos[x][y] += 1
-      end
-    end
+    octos.map! { |row| row.map { |octo| octo + 1 } }
 
     queue = []
 
@@ -54,11 +50,7 @@ def solution(filename, iterations = 100)
 
     flashes += flash(octos, queue)
 
-    octos.each_with_index do |row, x|
-      row.each_with_index do |_, y|
-        octos[x][y] = 0 if octos[x][y] > 9
-      end
-    end
+    octos.map! { |row| row.map { |octo| octo > 9 ? 0 : octo } }
 
     iter += 1
 
