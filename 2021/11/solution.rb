@@ -37,7 +37,7 @@ def solution(filename, iterations = 100)
   flashes = 0
   iter = 0
 
-  while iter < iterations do
+  while iter < iterations && octos.sum(&:sum).positive? do
     octos.map! { |row| row.map { |octo| octo + 1 } }
 
     queue = []
@@ -53,9 +53,7 @@ def solution(filename, iterations = 100)
     octos.map! { |row| row.map { |octo| octo > 9 ? 0 : octo } }
 
     iter += 1
-
-    return iter if octos.sum(&:sum).zero?
   end
 
-  flashes
+  { flashes: flashes, iterations: iter }
 end
