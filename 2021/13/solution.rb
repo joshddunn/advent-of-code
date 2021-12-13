@@ -28,29 +28,21 @@ def input(filename)
   { points: points, folds: folds }
 end
 
-def solution(filename, folds = Float::INFINITY)
+def solution(filename, alternate = false)
   inputs = input(filename)
 
-  [inputs[:folds].count, folds].min.times do |fold|
-    inputs[:points].map! do |point|
+  folds = alternate ? inputs[:folds].count : 1
+
+  folds.times do |fold|
+    inputs[:points].each do |point|
       axis, value = inputs[:folds][fold]
       point[axis] = value - (point[axis] - value) if point[axis] > value
-      point
     end.uniq!
   end
 
-  max_x = inputs[:points].map(&:first).max
-  max_y = inputs[:points].map(&:last).max
+  array = Array.from_coordinates(inputs[:points])
 
-  array = Array.new(max_y + 1) { Array.new(max_x + 1) }
-
-  inputs[:points].each do |point|
-    array[point[1]][point[0]] = 1
-  end
-
-  array.each do |row|
-    puts row.map { |p| p ? "#" : " " }.join
-  end
+  array.print if alternate
 
   { array: array, points: inputs[:points] }
 end
