@@ -11,6 +11,6 @@ def solution(filename)
 end
 
 spec solution("example.txt"), 0
-spec solution("input.txt"), 0
-spec solution("example.txt"), 0
-spec solution("input.txt"), 0
+# spec solution("input.txt"), 0
+# spec solution("example.txt"), 0
+# spec solution("input.txt"), 0
