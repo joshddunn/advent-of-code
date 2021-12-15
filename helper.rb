@@ -1,6 +1,10 @@
 require 'pry'
 require 'set'
 require 'colorize'
+require 'rgl/adjacency'
+require 'rgl/dijkstra'
+
+include RGL
 
 def spec(actual, expected)
   if actual == expected
@@ -43,5 +47,23 @@ class Array
     self.each do |row|
       puts row.map { |p| p.positive? ? " ".on_white : " " }.join
     end
+  end
+end
+
+class Dijkstra
+  def initialize
+    @graph = RGL::DirectedAdjacencyGraph.new
+    @weights = {}
+    @vertices = Set.new
+  end
+
+  def add_edge(from, to, weight)
+    @weights[[from, to]] = weight
+    @graph.add_edge from, to
+  end
+
+  def shortest_path(from, to)
+    dijkstra = DijkstraAlgorithm.new(@graph, @weights, DijkstraVisitor.new(@graph))
+    dijkstra.shortest_path(from, to)
   end
 end
