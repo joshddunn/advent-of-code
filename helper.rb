@@ -62,8 +62,11 @@ class Dijkstra
     @graph.add_edge from, to
   end
 
+  def dijkstra
+    DijkstraAlgorithm.new(@graph, @weights, DijkstraVisitor.new(@graph))
+  end
+
   def shortest_path(from, to)
-    dijkstra = DijkstraAlgorithm.new(@graph, @weights, DijkstraVisitor.new(@graph))
     dijkstra.shortest_path(from, to)
   end
 end
