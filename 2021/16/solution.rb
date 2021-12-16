@@ -99,10 +99,7 @@ class BitString
     @length += 15
 
     while length > 0 do
-      packet = BitString.new(@bits)
-      @children << packet
-      packet.parse
-      length -= packet.total_length
+      length -= parse_child.total_length
     end
   end
 
@@ -110,8 +107,11 @@ class BitString
     count = @bits.shift(11).join.to_i(2)
     @length += 11
 
-    count.times do
-      packet = BitString.new(@bits)
+    count.times { parse_child }
+  end
+
+  def parse_child
+    BitString.new(@bits).tap do |packet|
       @children << packet
       packet.parse
     end
