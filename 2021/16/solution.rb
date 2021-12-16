@@ -67,29 +67,29 @@ class BitString
   end
 
   def value
-    arr = all_numbers
+    numbers = all_numbers
     case @type_id
     when 0
-      arr.sum
+      numbers.sum
     when 1
-      arr.inject(:*)
+      numbers.inject(:*)
     when 2
-      arr.min
+      numbers.min
     when 3
-      arr.max
+      numbers.max
     when 4
-      arr.map { |a| a.to_s(2).rjust(4, "0") }.join("").to_i(2)
+      numbers.inject("") { |a, n| a + n.to_s(2).rjust(4, "0") }.to_i(2)
     when 5
-      arr[0] > arr[1] ? 1 : 0
+      numbers[0] > numbers[1] ? 1 : 0
     when 6
-      arr[0] < arr[1] ? 1 : 0
+      numbers[0] < numbers[1] ? 1 : 0
     when 7
-      arr[0] == arr[1] ? 1 : 0
+      numbers[0] == numbers[1] ? 1 : 0
     end
   end
 
-  def all_length
-    @length + @children.sum(&:all_length)
+  def total_length
+    @length + @children.sum(&:total_length)
   end
 
   private
@@ -102,7 +102,7 @@ class BitString
       packet = BitString.new(@bits)
       @children << packet
       packet.parse
-      length -= packet.all_length
+      length -= packet.total_length
     end
   end
 
