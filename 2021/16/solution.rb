@@ -45,12 +45,42 @@ class BitString
     when "0"
       length_subroutine
     else
-      four_subroutine
+      subroutine
     end
   end
 
   def version_sum
     @version + @children.sum(&:version_sum)
+  end
+
+  def all_numbers
+    @children.each do |child|
+      @numbers.push child.value
+    end
+
+    @numbers
+  end
+
+  def value
+    arr = all_numbers
+    case @type_id
+    when 0
+      arr.sum
+    when 1
+      arr.inject(:*)
+    when 2
+      arr.min
+    when 3
+      arr.max
+    when 4
+      arr.map { |a| a.to_s(2).rjust(4, "0") }.join("").to_i(2)
+    when 5
+      arr[0] > arr[1] ? 1 : 0
+    when 6
+      arr[0] < arr[1] ? 1 : 0
+    when 7
+      arr[0] == arr[1] ? 1 : 0
+    end
   end
 
   private
@@ -76,30 +106,30 @@ class BitString
     end
   end
 
-  def four_subroutine
+  def subroutine
     @length += 6
 
     while @bits.shift == "1" do
-      @numbers.concat @bits.shift(4)
+      @numbers.push @bits.shift(4).join("").to_i(2)
       @length += 5
     end
 
-    @numbers.concat @bits.shift(4)
+    @numbers.push @bits.shift(4).join("").to_i(2)
     @length += 5
 
     @numbers
   end
 end
 
-def solution(filename)
+def solution(filename, type)
   input(filename).map do |bits|
     bit_string = BitString.new(bits)
     bit_string.parse
-    bit_string.version_sum
+    bit_string.send(type)
   end
 end
 
-# spec solution("example.txt"), [16, 12, 23, 31]
-# spec solution("input.txt"), [1012]
-spec solution("example_two.txt"), [3, 54, 7, 9, 1, 0, 0, 1]
-# spec solution("input.txt"), 0
+# spec solution("example.txt", :version_sum), [16, 12, 23, 31]
+# spec solution("input.txt", :version_sum), [1012]
+spec solution("example_two.txt", :value), [3, 54, 7, 9, 1, 0, 0, 1]
+spec solution("input.txt", :value), 0
