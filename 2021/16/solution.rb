@@ -31,11 +31,16 @@ class BitString
   def initialize(bits)
     @version = bits.shift(3).join.to_i(2)
     @type_id = bits.shift(3).join.to_i(2)
-    @length_type_id = @type_id == 4 ? nil : bits.shift
     @bits = bits
     @children = []
-    @length = 0
     @numbers = []
+    @length_type_id = nil
+    @length = 6
+
+    if @type_id != 4
+      @length_type_id = @bits.shift
+      @length += 1
+    end
   end
 
   def parse
@@ -83,21 +88,27 @@ class BitString
     end
   end
 
+  def all_length
+    @length + @children.sum(&:all_length)
+  end
+
   private
 
   def length_subroutine
     length = @bits.shift(15).join.to_i(2)
+    @length += 15
 
     while length > 0 do
       packet = BitString.new(@bits)
       @children << packet
       packet.parse
-      length -= packet.length
+      length -= packet.all_length
     end
   end
 
   def count_subroutine
     count = @bits.shift(11).join.to_i(2)
+    @length += 11
 
     count.times do
       packet = BitString.new(@bits)
@@ -107,8 +118,6 @@ class BitString
   end
 
   def subroutine
-    @length += 6
-
     while @bits.shift == "1" do
       @numbers.push @bits.shift(4).join("").to_i(2)
       @length += 5
@@ -128,8 +137,3 @@ def solution(filename, type)
     bit_string.send(type)
   end
 end
-
-# spec solution("example.txt", :version_sum), [16, 12, 23, 31]
-# spec solution("input.txt", :version_sum), [1012]
-spec solution("example_two.txt", :value), [3, 54, 7, 9, 1, 0, 0, 1]
-spec solution("input.txt", :value), 0
