@@ -5,11 +5,12 @@ def input(filename)
 end
 
 class Tree
-  attr_accessor :left, :right, :parent, :value
+  attr_accessor :left, :right, :parent, :value, :splitted
 
   def initialize(value = nil, parent = nil)
     @value = value
     @parent = parent
+    @splitted = false
   end
 
   def add_left(left)
@@ -38,6 +39,7 @@ class Tree
       reduce
     end
 
+    top.splitted = false
     if should_split?
       split!
       reduce
@@ -45,12 +47,14 @@ class Tree
   end
 
   def split!
+    return if top.splitted
     return if top.should_explode?
 
-    if @value && should_split?
-      add_left (@value / 2.0).floor
-      add_right (@value / 2.0).ceil
+    if @value && @value >= 10
+      add_left @value / 2
+      add_right @value - @value / 2
       @value = nil
+      top.splitted = true
     else
       @left&.split!
       @right&.split!
@@ -64,12 +68,13 @@ class Tree
   def explode!
     return if @value
 
+
     if depth < 4
       @left.explode!
       @right.explode!
     else
-      @left.is_array? ? @left.explode : @left.explode!
-      @right.is_array? ? @right.explode : @right.explode!
+      @left.explode if @left.is_array?
+      @right.explode if @right.is_array?
     end
   end
 
@@ -141,6 +146,7 @@ class Tree
   end
 
   def should_split?
+    return false if top.splitted
     return @value >= 10 if @value
     @left.should_split? || @right.should_split?
   end
@@ -162,14 +168,11 @@ def solution(filename)
   start = inputs.shift
   tree = nil
 
-  inputs.each do |input|
-    left = start
-    right = input
-
+  inputs.map do |input|
     tree = Tree.new
 
-    tree.add_left left
-    tree.add_right right
+    tree.add_left start
+    tree.add_right input
 
     tree.reduce
 
@@ -196,7 +199,24 @@ def solution_sums(filename)
   end
 end
 
-spec solution("example.txt"), 4140
-spec solution_sums("example_sums.txt"), [143, 1384, 445, 791, 1137, 3488]
-spec solution("example_reduce.txt"), 3488
-spec solution("input.txt"), 0
+def solution_magnitude(filename)
+  inputs = input(filename)
+
+  max = 0
+
+  inputs.each_with_index do |left, x|
+    inputs.each_with_index do |right, y|
+      next if x == y
+
+      tree = Tree.new
+      tree.add_left left
+      tree.add_right right
+
+      tree.reduce
+
+      max = tree.multiply if tree.multiply > max
+    end
+  end
+
+  max
+end
