@@ -47,9 +47,9 @@ class Tree
   def split!
     return if top.should_explode?
 
-    if @value && @value >= 10
-      self.add_left (@value / 2.0).floor
-      self.add_right (@value / 2.0).ceil
+    if @value && should_split?
+      add_left (@value / 2.0).floor
+      add_right (@value / 2.0).ceil
       @value = nil
     else
       @left&.split!
@@ -68,34 +68,23 @@ class Tree
       @left.explode!
       @right.explode!
     else
-      if @left.is_array?
-        left = @left.left.value
-        right = @left.right.value
-        self.add_left 0
-        @left.explode(left, right)
-      else
-        @left.explode!
-      end
-
-      if @right.is_array?
-        left = @right.left.value
-        right = @right.right.value
-        self.add_right 0
-        @right.explode(left, right)
-      else
-        @right.explode!
-      end
+      @left.is_array? ? @left.explode : @left.explode!
+      @right.is_array? ? @right.explode : @right.explode!
     end
   end
 
-  def explode(left, right)
+  def explode
     if l = left_item
-      l.value += left
+      l.value += @left.value
     end
 
     if r = right_item
-      r.value += right
+      r.value += @right.value
     end
+
+    @value = 0
+    @right = nil
+    @left = nil
   end
 
   def left_ascend(item)
@@ -147,7 +136,7 @@ class Tree
 
   def should_explode?
     return false if @value
-    return true if (@left.is_array? || @right.is_array?) && depth >= 4
+    return true if depth > 4
     @left.should_explode? || @right.should_explode?
   end
 
@@ -184,13 +173,8 @@ def solution(filename)
 
     tree.reduce
 
-    puts ""
-    puts tree.print.inspect
-
     start = tree.print
   end
-
-  puts tree.print.inspect
 
   tree.multiply
 end
@@ -215,4 +199,4 @@ end
 spec solution("example.txt"), 4140
 spec solution_sums("example_sums.txt"), [143, 1384, 445, 791, 1137, 3488]
 spec solution("example_reduce.txt"), 3488
-# spec solution("input.txt"), 0
+spec solution("input.txt"), 0
