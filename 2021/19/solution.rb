@@ -38,20 +38,12 @@ class Vector
     Math.sqrt(x ** 2 + y ** 2 + z ** 2)
   end
 
-  def dot(vec)
-    x * vec.x + y * vec.y + z * vec.z
-  end
-
-  def angle(vec)
-    Math.acos(dot(vec) / (magnitude * vec.magnitude))
-  end
-
-  def slope(vec)
-    ((vec.y - y).to_f / (vec.x - x).to_f).abs
-  end
-
   def name
     "#{x},#{y},#{z}"
+  end
+
+  def hash
+    name.hash
   end
 
   def -(vec)
@@ -60,6 +52,13 @@ class Vector
 
   def +(vec)
     Vector.new(x + vec.x, y + vec.y, z + vec.z)
+  end
+
+  def *(int)
+    @x *= int
+    @y *= int
+    @z *= int
+    self
   end
 
   def -@
@@ -106,10 +105,6 @@ class Vector
     self
   end
 
-  def ==(vec)
-    @x == vec.x && @y == vec.y && @z == vec.z
-  end
-
   def eql?(other)
     other.kind_of?(self.class) && name == other.name
   end
@@ -118,18 +113,16 @@ end
 def solution(filename)
   inputs = input(filename)
 
-  # +/- 1000 in each direction
-
-  positions = { 0 => Vector.new(0, 0, 0) }
+  scanners = { 0 => Vector.new(0, 0, 0) }
 
   (inputs.keys.length - 1).times do
     inputs.each do |key, input|
-      next if positions[key]
+      next if scanners[key]
 
-      positions.keys.each do |pkey|
+      scanners.keys.each do |scanner|
 
         hash1 = {}
-        inputs[pkey].permutation(2).each do |permutation|
+        inputs[scanner].permutation(2).each do |permutation|
           vec1, vec2 = permutation
           hash1[[vec1, vec2]] = (vec1 - vec2).magnitude
         end
@@ -145,49 +138,31 @@ def solution(filename)
 
         next if overlap.count < 66
 
-        h1 = hash1.select { |k, v| v == overlap[0] }
-        h2 = hash2.select { |k, v| v == overlap[0] }
-
-        h1keys = h1.keys.flatten.uniq
-        h2keys = h2.keys.flatten.uniq
+        h1keys = hash1.key(overlap[0]).flatten.uniq
+        h2keys = hash2.key(overlap[0]).flatten.uniq
 
         [90.degrees, 90.degrees, 90.degrees, 90.degrees].each do |tx|
-          next if positions[key]
+          next if scanners[key]
           inputs[key].each { |v| v.rotate_x(tx) }
+
           [90.degrees, 90.degrees, 90.degrees, 90.degrees].each do |ty|
-            next if positions[key]
+            next if scanners[key]
             inputs[key].each { |v| v.rotate_y(ty) }
+
             [90.degrees, 90.degrees, 90.degrees, 90.degrees].each do |tz|
-              next if positions[key]
+              next if scanners[key]
               inputs[key].each { |v| v.rotate_z(tz) }
+
               h1keys.each do |h1key|
                 h2keys.each do |h2key|
-                  candidate = h2key - h1key
-                  intersection = inputs[key].map { |v| (v + candidate).name } & inputs[pkey].map(&:name)
-                  if intersection.count >= 12
-                    inputs[key].map! { |v| v + candidate }
-                    positions[key] = candidate
-                  end
-
-                  candidate = h2key - h1key
-                  intersection = inputs[key].map { |v| (v - candidate).name } & inputs[pkey].map(&:name)
-                  if intersection.count >= 12
-                    inputs[key].map! { |v| v - candidate }
-                    positions[key] = -candidate
-                  end
-
-                  candidate = h1key - h2key
-                  intersection = inputs[key].map { |v| (v + candidate).name } & inputs[pkey].map(&:name)
-                  if intersection.count >= 12
-                    inputs[key].map! { |v| v + candidate }
-                    positions[key] = candidate
-                  end
-
-                  candidate = h1key - h2key
-                  intersection = inputs[key].map { |v| (v - candidate).name } & inputs[pkey].map(&:name)
-                  if intersection.count >= 12
-                    inputs[key].map! { |v| v - candidate }
-                    positions[key] = -candidate
+                  [h1key - h2key, h2key - h1key].each do |candidate|
+                    [-1, 1].each do |direction|
+                      intersection = inputs[key].map { |v| v + candidate * direction } & inputs[scanner]
+                      if intersection.count >= 12
+                        inputs[key].map! { |v| v + candidate * direction }
+                        scanners[key] = candidate * direction
+                      end
+                    end
                   end
                 end
               end
@@ -206,7 +181,7 @@ def solution(filename)
     end
   end
 
-  max_manhattan = positions.values.permutation(2).map { |permutation| permutation[0].manhattan(permutation[1]) }.max
+  max_manhattan = scanners.values.permutation(2).map { |permutation| permutation[0].manhattan(permutation[1]) }.max
 
   { beacons_count: beacons.keys.count, max_manhattan: max_manhattan }
 end
