@@ -136,7 +136,7 @@ def solution(filename)
 
         overlap = (hash1.values & hash2.values).uniq
 
-        next if overlap.count < 66
+        next if overlap.count < 66 # 12 choose 2
 
         h1keys = hash1.key(overlap[0]).flatten.uniq
         h2keys = hash2.key(overlap[0]).flatten.uniq
