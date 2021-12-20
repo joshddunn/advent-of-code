@@ -45,10 +45,10 @@ def solution(filename, iter = 2)
 
         new_map[[x, y]] = inputs[:algorithm][index]
       end
-
-      right += 1
-      left -= 1
     end
+
+    right += 1
+    left -= 1
 
     map = new_map
   end
