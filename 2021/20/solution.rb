@@ -24,7 +24,7 @@ def solution(filename, iter = 2)
   left = -1
 
   iter.times do |t|
-    new_map = Hash.new(inputs[:algorithm][(map[[-200,-200]] * 9).split("").map { |s| s == "#" ? "1" : "0" }.join.to_i(2)])
+    new_map = Hash.new(inputs[:algorithm][(map[nil] * 9).split("").map { |s| s == "#" ? "1" : "0" }.join.to_i(2)])
 
     (left..right).each do |x|
       (left..right).each do |y|
