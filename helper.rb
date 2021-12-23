@@ -3,6 +3,7 @@ require 'set'
 require 'colorize'
 require 'rgl/adjacency'
 require 'rgl/dijkstra'
+require 'algorithms'
 
 include RGL
 
