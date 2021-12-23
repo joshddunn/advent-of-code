@@ -102,14 +102,7 @@ class Cave
   end
 end
 
-def solution(filename)
-  caves = [
-    ["D", "D"],
-    ["C", "A"],
-    ["B", "C"],
-    ["B", "A"]
-  ]
-
+def solution(caves)
   hallway = [nil, nil, "X", nil, "X", nil, "X", nil, "X", nil, nil]
 
   pqueue = MinPriorityQueue.new
@@ -117,22 +110,17 @@ def solution(filename)
   cave = Cave.new(nil, caves, hallway, caves[0].length)
   pqueue.push cave, cave.sum
 
-  seen = {}
+  seen = Hash.new(Float::INFINITY)
 
   while (cave = pqueue.pop).unsolved? do
     puts cave.sum
 
     cave.permutations.each do |permutation|
-      next if seen[permutation.key]
-      seen[permutation.key] = cave
+      next if seen[permutation.key] <= permutation.sum
+      seen[permutation.key] = permutation.sum
       pqueue.push permutation, permutation.sum
     end
   end
 
   cave.sum
 end
-
-spec solution("example.txt"), 0
-# spec solution("input.txt"), 0
-# spec solution("example.txt"), 0
-# spec solution("input.txt"), 0
